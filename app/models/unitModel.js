@@ -23,6 +23,11 @@ const UnitSchema = new mongoose.Schema({
         required: true,
         default: false
     },
+    vulnerable: {
+        type: Boolean,
+        required: true,
+        default: false
+    },
 	createdAt: {
         type: Date,
         default: Date.now

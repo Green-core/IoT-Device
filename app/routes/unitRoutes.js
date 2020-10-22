@@ -22,6 +22,8 @@ router.post("/connect-unit", (req, res) => {
 router.post("/update-data", (req, res) => {
   console.log("updating data");
   const time = new Date();
+  let vulnerable = false
+
   const soilMoistureReading = {
     reading: req.body.soilMoisture,
     time: time,
@@ -41,6 +43,14 @@ router.post("/update-data", (req, res) => {
     reading: req.body.lightIntensity,
     time: time,
   };
+
+  if(soilMoistureReading.reading==0 || humidityReading.reading==0 || temperatureReading.reading==0 || lightIntensityReading.reading==0){
+    vulnerable = true
+  }
+  else{
+    vulnerable = false
+  }
+  // add buzzer state also
 
   // console.log(pastReading)
 
@@ -67,6 +77,9 @@ router.post("/update-data", (req, res) => {
       // humidity
       "humiditySensor.lastReading": req.body.humidity,
       "humiditySensor.lastUpdatedTime": time,
+
+      //vulnerable
+      "vulnerable": vulnerable,
 
       // past readings
       $push: {
@@ -102,7 +115,7 @@ router.post("/update-data", (req, res) => {
             },
             "humiditySensor.pastReadings": {
               time: {
-                $lt: new Date(time.getTime() - 1000 * 60 * 30),
+                $lt: new Date(time.getTime() - 1000 * 60 * 10),
               },
             },
           },
